@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type ClientesServicos {
+  id                  String   @map("_id") @db.ObjectId
+  aguardandoPagamento Boolean
+  carro               String
+  concluido           Boolean
+  corCarro            String?
+  data                DateTime @db.Date
+  funcionario         String?
+  modeloCarro         String?
+  nome                String
+  pagamento           String?
+  preco               Int
+  tempoRestante       String?
+  valor               Int?
+}
+
+model Booking {
+  id                          String   @id @default(auto()) @map("_id") @db.ObjectId
+  cliente                     clientes @relation(fields: [clienteId], references: [id])
+  clienteId                   String   @db.ObjectId
+  selectedDayOfWeek           String
+  selectedDate                Int
+  selectedMonth               String
+  selectedYear                Int
+  selectedTime                String
+  selectedProductDefaultPrice Int
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+}
+
+model clientes {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int                @map("__v")
+  createdAt DateTime           @default(now())
+  nome      String
+  servicos  ClientesServicos[]
+  telefone  String             @unique
+  email     String?
+  updatedAt DateTime           @updatedAt
+  Booking   Booking[]
+}
+
+model despesas {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  v      Int      @map("__v")
+  data   DateTime @db.Date
+  nome   String
+  preco  Int?
+  recibo String?
+  tipo   String
+  valor  Int?
+}
+
+model faturamentodiarios {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model registrohoras {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  v           Int      @map("__v")
+  colaborador String
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  duracao     Json?
+  entrada     DateTime @db.Date
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  saida       Json?
+}
+
+model users {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  v        Int      @map("__v")
+  email    String   @unique(map: "email_1")
+  isAdmin  Boolean?
+  name     String
+  password String
+}
+
+model tokens {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  invalid   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
