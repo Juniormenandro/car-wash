@@ -7,85 +7,98 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-type ClientesServicos {
-  id                  String   @map("_id") @db.ObjectId
-  aguardandoPagamento Boolean
-  carro               String
-  concluido           Boolean
-  corCarro            String?
-  data                DateTime @db.Date
-  funcionario         String?
-  modeloCarro         String?
-  nome                String
-  pagamento           String?
-  preco               Int
-  tempoRestante       String?
-  valor               Int?
+type PostsComments {
+  id       String @map("_id") @db.ObjectId
+  postedBy String @db.ObjectId
+  text     String
 }
 
-model Booking {
-  id                          String   @id @default(auto()) @map("_id") @db.ObjectId
-  cliente                     clientes @relation(fields: [clienteId], references: [id])
-  clienteId                   String   @db.ObjectId
-  selectedDayOfWeek           String
-  selectedDate                Int
-  selectedMonth               String
-  selectedYear                Int
+type UsersServices {
+  id          String @map("_id") @db.ObjectId
+  description String
+  name        String
+}
+
+model ClientesServicos {
+  id                          String    @id @default(auto()) @map("_id") @db.ObjectId
+  aguardandoPagamento         Boolean
+  carro                       String
+  clienteId                   String    @db.ObjectId
+  concluido                   Boolean
+  createdAt                   DateTime? @db.Date
+  data                        DateTime  @db.Date
+  dataConclusao               DateTime? @db.Date
+  rawPrice                    String?
+  selectedColor               String
+  selectedModel               String
+  selectedPayment             String
+  selectedProductDefaultPrice String?
+  selectedProductId           String?
+  selectedProductNane         String
+  selectedProdutPrice         String
   selectedTime                String
-  selectedProductDefaultPrice Int
-  createdAt                   DateTime @default(now())
-  updatedAt                   DateTime @updatedAt
+  updatedAt                   DateTime? @db.Date
 }
 
 model clientes {
-  id        String             @id @default(auto()) @map("_id") @db.ObjectId
-  v         Int                @map("__v")
-  createdAt DateTime           @default(now())
-  nome      String
-  servicos  ClientesServicos[]
-  telefone  String             @unique
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  v         BigInt?   @map("__v")
+  createdAt DateTime  @db.Date
   email     String?
-  updatedAt DateTime           @updatedAt
-  Booking   Booking[]
+  nome      String
+  telefone  String    @unique(map: "telefone_1")
+  updatedAt DateTime? @db.Date
 }
 
 model despesas {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  v      Int      @map("__v")
-  data   DateTime @db.Date
-  nome   String
-  preco  Int?
-  recibo String?
-  tipo   String
-  valor  Int?
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 }
 
 model faturamentodiarios {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 }
 
-model registrohoras {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  v           Int      @map("__v")
-  colaborador String
-  /// Could not determine type: the field only had null or empty values in the sample set.
-  duracao     Json?
-  entrada     DateTime @db.Date
-  /// Could not determine type: the field only had null or empty values in the sample set.
-  saida       Json?
+model posts {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int             @map("__v")
+  body      String
+  comments  PostsComments[]
+  createdAt DateTime        @db.Date
+  likes     String[]
+  photo     String
+  postedBy  String          @db.ObjectId
+  title     String
+  updatedAt DateTime        @db.Date
 }
 
-model users {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  v        Int      @map("__v")
-  email    String   @unique(map: "email_1")
-  isAdmin  Boolean?
-  name     String
-  password String
+model registrohoras {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model servicos {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  v                   Int      @map("__v")
+  aguardandoPagamento Boolean
+  cliente             String   @db.ObjectId
+  concluido           Boolean
+  data                DateTime @db.Date
+  preco               Int
 }
 
 model tokens {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  invalid   Boolean  @default(false)
-  createdAt DateTime @default(now())
+  createdAt DateTime @db.Date
+  invalid   Boolean
+}
+
+model users {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int             @map("__v")
+  email     String          @unique(map: "email_1")
+  followers String[]
+  following String[]
+  name      String
+  password  String?
+  pic       String?
+  services  UsersServices[]
 }
