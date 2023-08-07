@@ -5,6 +5,7 @@ import { stripe } from "@/lib/stripe";
 import prisma from "@/lib/prismaClient";
 import { redirect } from "next/navigation";
 import jwt from "jsonwebtoken";
+import { data } from "autoprefixer";
 
 type SuccessProps = {
   searchParams: {
@@ -69,6 +70,10 @@ const Success: NextPage<SuccessProps> = async ({ searchParams }) => {
     },
   });
 
+
+
+
+
   if (findToken?.invalid) {
     redirect(`${process.env.APP_URL}`);
   } else {
@@ -79,6 +84,7 @@ const Success: NextPage<SuccessProps> = async ({ searchParams }) => {
         },
         data: { invalid: true },
       });
+      console.log("Recuperando a sessão do Stripe ...");
       const session = await stripe.checkout.sessions.retrieve(session_id);
 
       const userExists = await prisma.clientes.findFirst({
@@ -87,51 +93,47 @@ const Success: NextPage<SuccessProps> = async ({ searchParams }) => {
         },
       });
 
-      // If user does not exists create one
       if (!userExists) {
-        await prisma.clientes.create({
-          data: {
-            telefone: session.customer_details?.phone as string,
-            email: session.customer_details?.email as string,
-            nome: session.customer_details?.name as string,
-            v: 0,
-          },
-        });
-      }
-
-      // If user exists but he does not have an email add email to it
-      if (userExists && !userExists.email) {
-        const updatedUser = await prisma.clientes.update({
-          where: {
-            id: userExists.id,
-          },
-          data: {
-            email: session.customer_details?.email as string,
-          },
-        });
-
-        const bookingCreated = await prisma.booking.create({
-          data: {
-            selectedDate: Number(day),
-            selectedDayOfWeek: day_week,
-            selectedMonth: month,
-            selectedTime: time,
-            selectedYear: Number(year),
-            selectedProductDefaultPrice: Number(price),
-            cliente: {
-              connect: {
+        console.log("Criando novo usuário ...");
+        const newUser = await prisma.clientes.create({
+            data: {
                 telefone: session.customer_details?.phone as string,
-              },
+                email: session.customer_details?.email as string,
+                nome: session.customer_details?.name as string,
+                v: 0,
             },
-          },
         });
-
+        console.log("Usuário criado com sucesso!");
+    
+        // Agora, criamos uma reserva para o usuário recém-criado.
+        console.log("Criando reserva para novo usuário ...");
+        const bookingCreated = await prisma.booking.create({
+            data: {
+                selectedDate: Number(day),
+                selectedDayOfWeek: day_week,
+                selectedMonth: month,
+                selectedTime: time,
+                selectedYear: Number(year),
+                selectedProductDefaultPrice: Number(price),
+                cliente: {
+                    connect: {
+                        telefone: session.customer_details?.phone as string,
+                    },
+                },
+            },
+        });
         if (bookingCreated) {
-          console.log("Send email to " + updatedUser.email);
+            console.log("Reserva criada com sucesso!");
+        } else {
+            console.log("Falha ao criar a reserva.");
         }
-      }
+    }
 
+
+
+    
       if (userExists && userExists.email) {
+        console.log("Criando reserva para usuário com email existente ...");
         const bookingCreated = await prisma.booking.create({
           data: {
             selectedDate: Number(day),
@@ -147,12 +149,14 @@ const Success: NextPage<SuccessProps> = async ({ searchParams }) => {
             },
           },
         });
-
+        console.log("Reserva criada com sucesso!");
         if (bookingCreated) {
-          console.log("Send email to " + userExists.email);
+          console.log(searchParams)
+          //console.log("Send email to " + userExists.email);
         }
       }
     } catch (error: any) {
+      console.error("Erro ao criar usuário ou reserva:", error);
       redirect(`${process.env.APP_URL}/?error=${error.message}`);
     }
   }
