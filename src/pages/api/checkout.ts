@@ -42,7 +42,6 @@ const checkout = async (req: NextApiRequest, res: NextApiResponse) => {
         invalid: false,
       },
     });
-    console.log(tokenPayload);
 
     const success_url = `${
       process.env.APP_URL

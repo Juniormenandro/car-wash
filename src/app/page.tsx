@@ -16,25 +16,38 @@ import useSWR from "swr";
 export type ProductType = {
   id: string;
   name: string;
-  price: string;
-  default_price: string;
-  raw_price: string;
+  price?: string;
+  default_price?: string;
+  raw_price?: string;
 };
+
+const carType: ProductType[] = [
+  {
+    id: "1",
+    name: "Hatch",
+  },
+  {
+    id: "2",
+    name: "Sedan",
+  },
+  {
+    id: "3",
+    name: "SUV",
+  },
+];
 
 export type BookingType = typeof bookingDataInitialState;
 
 const BookingPage: NextPage = () => {
   const { data, error, isLoading } = useSWR<ProductType[]>(
     "/api/getprices",
-    fetcher,
-    {
-      revalidateOnFocus: false,
-    }
+    fetcher
   );
   const [bookingData, setBookingData] = useLocalStorage(
     "booking_step",
     bookingDataInitialState as BookingType
   );
+
   const [checkoutIsLoading, setIsCheckoutLoading] = useState<boolean>(false);
   const dates = useGetTime();
   const searchParams = useSearchParams();
@@ -103,6 +116,7 @@ const BookingPage: NextPage = () => {
               dates={dates}
               bookingData={bookingData}
               setBookingData={setBookingData}
+              carType={carType}
             />
           </div>
         </div>

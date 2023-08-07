@@ -69,6 +69,17 @@ const StepButton: React.FC<StepButtonProps> = ({
       {step === 2 && (
         <Button
           type="button"
+          isLoading={false}
+          // disabled={!selectedTime || checkoutIsLoading}
+          onClick={handleContinue}
+        >
+          Continue
+        </Button>
+      )}
+
+      {step === 3 && (
+        <Button
+          type="button"
           isLoading={checkoutIsLoading}
           disabled={!selectedTime || checkoutIsLoading}
           onClick={finishBooking}

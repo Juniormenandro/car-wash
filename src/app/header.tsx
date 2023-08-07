@@ -13,7 +13,6 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between">
           <nav className="flex items-center">
             {/* <DynamicDrawer /> */}
-            <h2>hello</h2>
           </nav>
           <div className="flex items-center">
             {/* <div className="mr-4">LOGO</div> */}
