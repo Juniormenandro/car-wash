@@ -33,7 +33,7 @@ model Booking {
   selectedYear                Int
   selectedTime                String
   selectedProductDefaultPrice Int
-  concluido                   Boolean  @default(false)  
+  bookConcluido                   Boolean  @default(false)  
   createdAt                   DateTime @default(now())
   updatedAt                   DateTime @updatedAt
 }
