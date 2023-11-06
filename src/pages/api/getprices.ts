@@ -14,16 +14,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         style: "currency",
         currency: "EUR",
       }).format((price.unit_amount as number) / 100);
-
+    
       return {
         id: product.id,
         name: product.name,
+        description: product.description, // Add the description here
         imageUrl: product.images[0],
         price: formattedPrice,
         default_price: price.id,
         raw_price: price.unit_amount,
       };
     });
+    
 
     res.status(200).json(products);
   } catch (error) {

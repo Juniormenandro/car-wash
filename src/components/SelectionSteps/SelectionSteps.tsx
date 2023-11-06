@@ -29,7 +29,8 @@ const SelectionSteps: React.FC<SelectionStepsProps> = ({
   setBookingData,
   carType,
 }) => {
-  const isMiniVallet = "prod_OK1viin1mAvhZM";
+
+  const isMiniVallet = "price_1O8O0kASr8npcUssqcQKBZmK";
 
   const isHatch =
     bookingData.selectedProductNane.toLocaleLowerCase() === "hatch";
@@ -94,13 +95,16 @@ const SelectionSteps: React.FC<SelectionStepsProps> = ({
               selectedProdutPrice: product.price as string,
               selectedProductDefaultPrice:
                 isMiniVallet && isHatch
-                  ? "price_1Nc8OKASr8npcUssLnJBR1di"
+                  ? "price_1O8Oj4ASr8npcUssQcpDjlUO"
                   : (product.default_price as string),
               rawPrice: product.raw_price as string,
             })
           }
         >
           <strong>{product.name}</strong>
+          {bookingData.selectedProductId === product.id && (
+            <p className="description">{product.description}</p>
+          )}
         </Selector>
       ));
 

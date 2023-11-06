@@ -19,6 +19,7 @@ export type ProductType = {
   price?: string;
   default_price?: string;
   raw_price?: string;
+  description?: string;
 };
 
 const carType: ProductType[] = [
